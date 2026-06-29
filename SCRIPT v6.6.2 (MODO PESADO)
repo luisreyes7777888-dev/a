@@ -1819,8 +1819,8 @@ function ESPSystem.CreatePlayerESP(char, player)
         local dist = Utilities.SafeDistance(safeCamera.CFrame.Position, partCache.HumanoidRootPart.Position)
         CachedState.PlayerDistanceCache[player] = dist
 
-        -- Distance check: ocultar si esta lejos
-        if dist > ESPConfig.MaxDistance then
+        -- Distance check: 0 = sin limite
+        if ESPConfig.MaxDistance > 0 and dist > ESPConfig.MaxDistance then
             if billboard.Enabled then billboard.Enabled = false end
             if highlight.Enabled then highlight.Enabled = false end
             return
@@ -2148,7 +2148,7 @@ function ItemDropESP.Update()
             or math.huge
 
         -- Ocultar si supera la distancia maxima
-        if dist > ESPConfig.ItemDropDistance then
+        if ESPConfig.ItemDropDistance > 0 and dist > ESPConfig.ItemDropDistance then
             local d = ItemDropESP.Drawings[item]
             if d then
                 if d.label then d.label.Visible = false end
@@ -4806,7 +4806,7 @@ createSectionHeader(visualsContent, "ITEM DROP ESP")
 itemDropCard = createCard(visualsContent)
 createInfoRow(itemDropCard, "+", "Item Drops", "See dropped items in the world")
 createToggle(itemDropCard, "Item Drop ESP", ESPConfig.ItemDrop, function(v) ESPConfig.ItemDrop = v end)
-createSlider(itemDropCard, "Max Distance", 50, 1000, ESPConfig.ItemDropDistance, function(v) ESPConfig.ItemDropDistance = v end)
+createSlider(itemDropCard, "Max Distance", 0, 10000, ESPConfig.ItemDropDistance, function(v) ESPConfig.ItemDropDistance = v end)
 createToggle(itemDropCard, "Item Tracers", ESPConfig.ItemDropTracers, function(v) ESPConfig.ItemDropTracers = v end)
 createToggle(itemDropCard, "Item Box 3D", ESPConfig.ItemDropBox, function(v) ESPConfig.ItemDropBox = v end)
 
@@ -4823,7 +4823,7 @@ end)
 createSectionHeader(visualsContent, "OPTIMIZATION")
 espOptCard = createCard(visualsContent)
 createInfoRow(espOptCard, "+", "ESP Performance", "Rendering optimization")
-createSlider(espOptCard, "Max ESP Distance", 100, 5000, ESPConfig.MaxDistance, function(v) ESPConfig.MaxDistance = v end)
+createSlider(espOptCard, "Max ESP Distance", 0, 50000, ESPConfig.MaxDistance, function(v) ESPConfig.MaxDistance = v end)
 createSlider(espOptCard, "Update Interval (ms)", 16, 200, math.floor(ESPConfig.UpdateInterval * 1000), function(v) ESPConfig.UpdateInterval = v / 1000 end)
 
 -- ============================================================
