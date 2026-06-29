@@ -1,6 +1,6 @@
 --====================================================--
 -- PYTHON_S - SCRIPT v6.6.2 (MODO PESADO)
--- Versi�n: 6.6.2 (Pesado)
+-- Version: 6.6.2 (Pesado)
 -- UI: ScriptHub Custom UI (Dark + Neon Green)
 -- Changelog v6.7.0:
 --  - NUEVO: Tab WEAPONS con Gun Mods y Melee Mods.
@@ -12,11 +12,11 @@
 --====================================================--
 
 --====================================================--
--- PROTECCI?"N CONTRA DUPLICADOS ABSOLUTA
+-- PROTECCION CONTRA DUPLICADOS ABSOLUTA
 --====================================================--
 local ScriptAlreadyLoaded = getgenv().PYTHON_S_V6_LOADED
 if ScriptAlreadyLoaded then
-    warn("[PYTHON_S] Script ya est� cargado. Deteniendo ejecuci�n duplicada.")
+    warn("[PYTHON_S] Script ya esta cargado. Deteniendo ejecucion duplicada.")
     return
 end
 getgenv().PYTHON_S_V6_LOADED = true
@@ -36,7 +36,7 @@ print("                  -------------------------------------------------------
 print("")
 
 --====================================================--
--- BYPASS SYSTEM (Versi?n ligera - solo anti-detecci?n b?sica)
+-- BYPASS SYSTEM (Version ligera - solo anti-deteccion basica)
 --====================================================--
 shared.HOOKING_ENABLED = true
 shared.HookRegistry = shared.HookRegistry or {}
@@ -45,7 +45,7 @@ shared.Hooking.IncludeInStackFunctions = shared.Hooking.IncludeInStackFunctions 
 
 do
     local bypassSuccess, bypassErr = pcall(function()
-        -- Solo deshabilitar conexiones de error (anti-detecci?n b?sica)
+        -- Solo deshabilitar conexiones de error (anti-deteccion basica)
         -- NO se toca getfenv ni se matan hilos del juego
         local BlacklistedSignals = {
             game:GetService("LogService").MessageOut,
@@ -63,7 +63,7 @@ do
             end
         end
 
-        print("[PYTHON_S] Bypass ligero cargado (solo anti-detecci?n)")
+        print("[PYTHON_S] Bypass ligero cargado (solo anti-deteccion)")
     end)
 
     if not bypassSuccess then
@@ -73,13 +73,12 @@ do
 end
 
 --====================================================--
--- CONFIGURACI?"N GLOBAL MEJORADA
+-- CONFIGURACION GLOBAL MEJORADA
 --====================================================--
 local ScriptConfig = {
     Version = "6.6.0",
     Debug = false,
     MaxToolCacheSize = 100,
-
     InputDebounce = 0.2,
     EnemyCacheUpdateRate = 1.0,
     RaycastThrottleTime = 0.0,
@@ -103,7 +102,7 @@ local ScriptConfig = {
 }
 
 --====================================================--
--- MEGA MEJORA #1: SISTEMA PREDICCI?"N DE POSICI?"N
+-- MEGA MEJORA #1: SISTEMA PREDICCION DE POSICION
 --====================================================--
 local PredictionSystem = {}
 PredictionSystem.TargetHistory = {}
@@ -168,7 +167,7 @@ function SmoothingSystem.GetSmoothedCamera(camera, targetPos, smoothFactor)
 end
 
 --====================================================--
--- MEGA MEJORA #3: SISTEMA DE FOV DIN�MICO
+-- MEGA MEJORA #3: SISTEMA DE FOV DINAMICO
 --====================================================--
 local DynamicFOVSystem = {}
 
@@ -184,7 +183,7 @@ function DynamicFOVSystem.CalculateFOV(targetDistance, baseDistance)
 end
 
 --====================================================--
--- MEGA MEJORA #4: SISTEMA DE PRIORIZACI?"N INTELIGENTE
+-- MEGA MEJORA #4: SISTEMA DE PRIORIZACION INTELIGENTE
 --====================================================--
 local PrioritizationSystem = {}
 PrioritizationSystem.Weights = {
@@ -217,7 +216,7 @@ function PrioritizationSystem.CalculateScore(player, camera, center, aiming)
 end
 
 --====================================================--
--- MEGA MEJORA #5: SISTEMA DE DETECCI?"N DE MOVIMIENTO
+-- MEGA MEJORA #5: SISTEMA DE DETECCION DE MOVIMIENTO
 --====================================================--
 local MovementDetectionSystem = {}
 MovementDetectionSystem.LastPositions = {}
@@ -237,7 +236,7 @@ function MovementDetectionSystem.IsMovingFast(velocity, threshold)
 end
 
 --====================================================--
--- MEGA MEJORA #6: SISTEMA DE AN�LISIS DE RECOIL
+-- MEGA MEJORA #6: SISTEMA DE ANALISIS DE RECOIL
 --====================================================--
 local RecoilAnalysisSystem = {}
 RecoilAnalysisSystem.WeaponRecoil = {
@@ -264,7 +263,7 @@ function RecoilAnalysisSystem.CompensateRecoil(aimPoint, recoilPattern, shotCoun
 end
 
 --====================================================--
--- MEGA MEJORA #7: SISTEMA DE ESTAD�STICAS EN TIEMLE REAL
+-- MEGA MEJORA #7: SISTEMA DE ESTADISTICAS EN TIEMLE REAL
 --====================================================--
 local StatisticsSystem = {}
 StatisticsSystem.Data = {
@@ -281,7 +280,7 @@ StatisticsSystem.Data = {
 function StatisticsSystem.Update()
     local currentTime = tick()
     if currentTime - StatisticsSystem.Data.LastUpdate > 5 then
-        -- Se actualizan y reinician las m�tricas sin imprimir en consola
+        -- Se actualizan y reinician las metricas sin imprimir en consola
         StatisticsSystem.Data.TargetsLocked = 0
         StatisticsSystem.Data.PredictionsUsed = 0
         StatisticsSystem.Data.RaycastsPerformed = 0
@@ -290,7 +289,7 @@ function StatisticsSystem.Update()
 end
 
 --====================================================--
--- MEGA MEJORA #8: SISTEMA DE GESTI?"N DE RED OPTIMIZADO
+-- MEGA MEJORA #8: SISTEMA DE GESTION DE RED OPTIMIZADO
 --====================================================--
 local NetworkOptimizer = {}
 NetworkOptimizer.LastPacketTime = {}
@@ -389,7 +388,7 @@ function AlertSystem.GetHighPriorityAlert()
 end
 
 --====================================================--
--- SISTEMA DE CONFIGURACI?"N PERSISTENTE (writefile/readfile)
+-- SISTEMA DE CONFIGURACION PERSISTENTE (writefile/readfile)
 --====================================================--
 local ConfigFileName = "pythons_config_v6.txt"
 local MyConfig = {}
@@ -408,8 +407,6 @@ function MyConfig:Save()
         DynamicFOV = Aiming.DynamicFOV,
         FOVRadius = Aiming.FOV,
         ShowFOV = Aiming.ShowFOV,
-        HeadDot = Aiming.HeadDotESP,
-        ExcludedPlayers = Aiming.ExcludedPlayers,
         TeamCheck = Aiming.TeamCheck,
         FriendCheck = Aiming.FriendCheck,
         WallCheck = Aiming.WallCheck,
@@ -418,10 +415,10 @@ function MyConfig:Save()
         WeaponAim = WeaponAimConfig.Enabled,
         PlayerNames = ESPConfig.Name,
         Chams = ESPConfig.Chams,
-        ChamsColor = {math.floor(ESPConfig.ChamsColor.R*255), math.floor(ESPConfig.ChamsColor.G*255), math.floor(ESPConfig.ChamsColor.B*255)},
         Skeleton = ESPConfig.Skeleton,
         CornerBox = ESPConfig.CornerBox,
         Box3D = ESPConfig.Box,
+        PartBox = ESPConfig.PartBox,
         PredictionLine = ESPConfig.PredictionLine,
         HealthBar = ESPConfig.Health,
         HealthPercent = ESPConfig.HealthPercent,
@@ -452,6 +449,14 @@ function MyConfig:Save()
         MeleeKillAura = MeleeModsConfig.KillAura,
         MeleeExtendedRange = MeleeModsConfig.ExtendedRange,
         MeleeRange = MeleeModsConfig.Range,
+        MeleeDamage = MeleeModsConfig.Damage,
+        MeleeSpeed = MeleeModsConfig.Speed,
+        MeleeConeAngle = MeleeModsConfig.ConeAngle,
+        MeleeNoCone = MeleeModsConfig.NoConeCheck,
+        MeleeVisualize = MeleeModsConfig.Visualize,
+        ExcludedPlayers = Aiming.ExcludedPlayers,
+        AutoDrop = AutoDropConfig.Enabled,
+        AutoDropThreshold = AutoDropConfig.ThresholdRarity,
     }
     pcall(function()
         writefile(ConfigFileName, HttpService:JSONEncode(data))
@@ -478,14 +483,9 @@ function MyConfig:Load()
         if data.DynamicFOV ~= nil then Aiming.DynamicFOV = data.DynamicFOV end
         if data.FOVRadius then Aiming.FOV = data.FOVRadius end
         if data.ShowFOV ~= nil then Aiming.ShowFOV = data.ShowFOV end
-        if data.HeadDot ~= nil then Aiming.HeadDotESP = data.HeadDot end
         if data.TeamCheck ~= nil then Aiming.TeamCheck = data.TeamCheck end
         if data.FriendCheck ~= nil then Aiming.FriendCheck = data.FriendCheck end
         if data.WallCheck ~= nil then Aiming.WallCheck = data.WallCheck end
-        if data.ExcludedPlayers then Aiming.ExcludedPlayers = data.ExcludedPlayers end
-        if data.ChamsColor and type(data.ChamsColor) == "table" and #data.ChamsColor == 3 then
-            ESPConfig.ChamsColor = Color3.fromRGB(data.ChamsColor[1], data.ChamsColor[2], data.ChamsColor[3])
-        end
         if data.DistanceCheck ~= nil then Aiming.UseMagnitude = data.DistanceCheck end
         if data.MaxStuds then Aiming.MaxStuds = data.MaxStuds end
         if data.WeaponAim ~= nil then WeaponAimConfig.Enabled = data.WeaponAim end
@@ -494,6 +494,7 @@ function MyConfig:Load()
         if data.Skeleton ~= nil then ESPConfig.Skeleton = data.Skeleton end
         if data.CornerBox ~= nil then ESPConfig.CornerBox = data.CornerBox end
         if data.Box3D ~= nil then ESPConfig.Box = data.Box3D end
+        if data.PartBox ~= nil then ESPConfig.PartBox = data.PartBox end
         if data.PredictionLine ~= nil then ESPConfig.PredictionLine = data.PredictionLine end
         if data.HealthBar ~= nil then ESPConfig.Health = data.HealthBar end
         if data.HealthPercent ~= nil then ESPConfig.HealthPercent = data.HealthPercent end
@@ -524,6 +525,20 @@ function MyConfig:Load()
         if data.MeleeKillAura ~= nil then MeleeModsConfig.KillAura = data.MeleeKillAura end
         if data.MeleeExtendedRange ~= nil then MeleeModsConfig.ExtendedRange = data.MeleeExtendedRange end
         if data.MeleeRange then MeleeModsConfig.Range = data.MeleeRange end
+        if data.MeleeDamage then MeleeModsConfig.Damage = data.MeleeDamage end
+        if data.MeleeSpeed then MeleeModsConfig.Speed = data.MeleeSpeed end
+        if data.MeleeConeAngle then MeleeModsConfig.ConeAngle = data.MeleeConeAngle end
+        if data.MeleeNoCone ~= nil then MeleeModsConfig.NoConeCheck = data.MeleeNoCone end
+        if data.MeleeVisualize ~= nil then MeleeModsConfig.Visualize = data.MeleeVisualize end
+        if data.AutoDrop ~= nil then AutoDropConfig.Enabled = data.AutoDrop end
+        if data.AutoDropThreshold then AutoDropConfig.ThresholdRarity = data.AutoDropThreshold end
+        if data.ExcludedPlayers and type(data.ExcludedPlayers) == "table" then
+            local tbl = {}
+            for uid in pairs(data.ExcludedPlayers) do
+                tbl[tonumber(uid) or uid] = true
+            end
+            Aiming.ExcludedPlayers = tbl
+        end
     end)
 end
 
@@ -552,7 +567,7 @@ local function LogPerformance()
             PerformanceStats.AverageFrameTime = avgTime
 
             local fps = 1000 / (avgTime + 0.001)
-            -- Estad�sticas calculadas internamente (sin impresi�n)
+            -- Estadisticas calculadas internamente (sin impresion)
         end
         PerformanceStats.RenderTime = 0
         PerformanceStats.RaycastCount = 0
@@ -598,7 +613,7 @@ function Utilities.SafeCallWithRetry(func, maxAttempts)
         end
     end
 
-    Utilities.Log("SafeCall fall� despu�s de " .. maxAttempts .. " intentos", "ERROR")
+    Utilities.Log("SafeCall fallo despues de " .. maxAttempts .. " intentos", "ERROR")
     return false, nil
 end
 
@@ -839,7 +854,7 @@ local Camera = workspace.CurrentCamera
 --====================================================--
 
 --====================================================--
--- CONFIGURACI?"N AIMBOT MEJORADA
+-- CONFIGURACION AIMBOT MEJORADA
 --====================================================--
 local Aiming = {
     Enabled = false,
@@ -855,12 +870,11 @@ local Aiming = {
     UseMagnitude = false,
     MaxStuds = 500,
     WhitelistedPlayers = {},
-    WhitelistColor = Color3.fromRGB(0, 255, 127),
     ExcludedPlayers = {},
+    WhitelistColor = Color3.fromRGB(0, 255, 127),
     FOV = 130,
     ShowFOV = false,
     AimTracer = false,
-    HeadDotESP = false,
     ToggleState = false,
     -- NUEVAS OPCIONES v6.0
     UsePredictiveAim = false,
@@ -873,7 +887,7 @@ local Aiming = {
 }
 
 --====================================================--
--- CONFIGURACI?"N ESP MEJORADA
+-- CONFIGURACION ESP MEJORADA
 --====================================================--
 local ESPConfig = {
     Name = false,
@@ -891,7 +905,8 @@ local ESPConfig = {
     Skeleton = false,
     CornerBox = false,
     Box = false,
-    -- OPTIMIZACI?"N ESP
+    PartBox = false,
+    -- OPTIMIZACION ESP
     MaxDistance = 4000,
     UpdateInterval = 0.1,
     -- ITEM DROP ESP v6.5.1
@@ -933,7 +948,7 @@ local PerfConfig = {
 -- WEAPON CAMERA OFFSET (solo se aplica cuando hay arma equipada)
 --====================================================--
 local WeaponAimConfig = {
-    Enabled = true,
+    Enabled = false,
 }
 
 --====================================================--
@@ -953,12 +968,21 @@ local ItemAuraConfig = {
     },
 }
 
+local AutoDropConfig = {
+    Enabled = false,
+    Distance = 30,
+    ThresholdRarity = "Common",
+}
+
 local MeleeModsConfig = {
     KillAura = false,
     ExtendedRange = false,
     Range = 10,
     NoConeCheck = false,
     Speed = 1.0,
+    Damage = 1.0,
+    ConeAngle = 30,
+    Visualize = false,
 }
 
 --====================================================--
@@ -968,6 +992,7 @@ local MeleeModsSystem = {}
 MeleeModsSystem.Hooked = false
 MeleeModsSystem._killAuraConn = nil
 MeleeModsSystem._meleeHook = nil
+MeleeModsSystem._stateHooks = {}
 
 function MeleeModsSystem.GetMeleeModule()
     local ok, mod = pcall(function()
@@ -987,30 +1012,67 @@ function MeleeModsSystem.HookGetHitPlayers()
     MeleeModsSystem._meleeHook = oldHitPlayers
     pcall(function()
         hookFn(oldHitPlayers, newcclosure(function(tool, ...)
-        if MeleeModsConfig.ExtendedRange then
-            local char = LocalPlayer.Character
-            local hrp = char and char:FindFirstChild("HumanoidRootPart")
-            if not hrp then return oldHitPlayers(tool, ...) end
-            local hitPlayers = {}
-            for _, player in pairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer then
-                    local pChar = player.Character
-                    if pChar then
-                        local pHRP = pChar:FindFirstChild("HumanoidRootPart")
-                        local hum = pChar:FindFirstChildOfClass("Humanoid")
-                        if pHRP and hum and not hum:GetAttribute("IsDead") then
-                            if (pHRP.Position - hrp.Position).Magnitude <= MeleeModsConfig.Range then
-                                table.insert(hitPlayers, player)
+            if MeleeModsConfig.ExtendedRange or MeleeModsConfig.NoConeCheck then
+                local char = LocalPlayer.Character
+                local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                if not hrp then return oldHitPlayers(tool, ...) end
+                local pivot = char:GetPivot()
+                local hitPlayers = {}
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer then
+                        local pChar = player.Character
+                        if pChar then
+                            local pHRP = pChar:FindFirstChild("HumanoidRootPart")
+                            local hum = pChar:FindFirstChildOfClass("Humanoid")
+                            if pHRP and hum and not hum:GetAttribute("IsDead") then
+                                local dist = (pChar:GetPivot().Position - pivot.Position).Magnitude
+                                if dist <= MeleeModsConfig.Range then
+                                    table.insert(hitPlayers, player)
+                                end
                             end
                         end
                     end
                 end
+                if MeleeModsConfig.NoConeCheck then
+                    return hitPlayers
+                end
+                return hitPlayers
             end
-            return hitPlayers
-        end
-        return oldHitPlayers(tool, ...)
-    end))
+            return oldHitPlayers(tool, ...)
+        end))
     end)
+end
+
+function MeleeModsSystem.HookStateGetters()
+    if #MeleeModsSystem._stateHooks > 0 then return end
+    local MeleeModule = MeleeModsSystem.GetMeleeModule()
+    if not MeleeModule then return end
+    local hookFn = hookfunction or replaceclosure
+    if not hookFn then return end
+    local stateNames = { ["range"] = "Range", ["speed"] = "Speed", ["damage"] = "Damage", ["cone_angle"] = "ConeAngle" }
+    for stateName, configKey in pairs(stateNames) do
+        local ok, stateInfo = pcall(function()
+            for _, obj in pairs(MeleeModule.objects or {}) do
+                if obj and obj.states and obj.states[stateName] and obj.states[stateName].get then
+                    return obj.states[stateName]
+                end
+            end
+            return nil
+        end)
+        if ok and stateInfo then
+            local oldGet = stateInfo.get
+            table.insert(MeleeModsSystem._stateHooks, oldGet)
+            pcall(function()
+                hookFn(oldGet, newcclosure(function(...)
+                    if MeleeModsConfig.ExtendedRange then
+                        local val = MeleeModsConfig[configKey]
+                        if val ~= nil then return val end
+                    end
+                    return oldGet(...)
+                end))
+            end)
+        end
+    end
 end
 
 function MeleeModsSystem.ToggleKillAura(enabled)
@@ -1031,8 +1093,7 @@ function MeleeModsSystem.ToggleKillAura(enabled)
                 if tag:lower() == "melee" then isMelee = true; break end
             end
             if not isMelee then return end
-            local hrp = char:FindFirstChild("HumanoidRootPart")
-            if not hrp then return end
+            local pivot = char:GetPivot()
             local hitPlayers = {}
             for _, player in pairs(Players:GetPlayers()) do
                 if player ~= LocalPlayer then
@@ -1041,7 +1102,8 @@ function MeleeModsSystem.ToggleKillAura(enabled)
                         local pHRP = pChar:FindFirstChild("HumanoidRootPart")
                         local hum = pChar:FindFirstChildOfClass("Humanoid")
                         if pHRP and hum and not hum:GetAttribute("IsDead") then
-                            if (pHRP.Position - hrp.Position).Magnitude <= 10 then
+                            local dist = (pChar:GetPivot().Position - pivot.Position).Magnitude
+                            if dist <= 10 then
                                 table.insert(hitPlayers, player)
                             end
                         end
@@ -1051,14 +1113,32 @@ function MeleeModsSystem.ToggleKillAura(enabled)
             if #hitPlayers > 0 then
                 pcall(function()
                     tool:Activate()
-                    local remote = ReplicatedStorage:WaitForChild("RemoteEvents", 3)
+                    local remote = ReplicatedStorage:FindFirstChild("RemoteEvents")
                     if remote then
                         local meleeRemote = remote:FindFirstChild("melee_attack")
                         if meleeRemote then
-                            meleeRemote:FireServer(tool, hitPlayers, hrp.CFrame, Vector3.new(0, 0, 0))
+                            local speedVal = 30 * 0.75 + math.random() * 30 * 0.25
+                            meleeRemote:FireServer(tool, hitPlayers, pivot, speedVal)
                         end
                     end
                 end)
+                if MeleeModsConfig.Visualize then
+                    pcall(function()
+                        local vis = Instance.new("Part")
+                        vis.Name = "OutdoorCeiling"
+                        vis.Shape = Enum.PartType.Ball
+                        vis.Size = Vector3.new(MeleeModsConfig.Range * 2, MeleeModsConfig.Range * 2, MeleeModsConfig.Range * 2)
+                        vis.CanCollide = false
+                        vis.CanQuery = false
+                        vis.Anchored = true
+                        vis.Material = Enum.Material.ForceField
+                        vis.Color = #hitPlayers > 0 and Color3.new(0, 1, 0) or Color3.new(1, 0, 0)
+                        vis.Transparency = 0.7
+                        vis.CFrame = pivot
+                        vis.Parent = workspace
+                        game:GetService("Debris"):AddItem(vis, 0.5)
+                    end)
+                end
                 task.wait(0.5)
             end
         end)
@@ -1069,11 +1149,21 @@ function MeleeModsSystem.Setup()
     if MeleeModsSystem.Hooked then return end
     if not FeatureCompat.MeleeExtended then return end
     pcall(function() MeleeModsSystem.HookGetHitPlayers() end)
+    pcall(function() MeleeModsSystem.HookStateGetters() end)
     MeleeModsSystem.Hooked = true
 end
 
+function MeleeModsSystem.Cleanup()
+    MeleeModsConfig.KillAura = false
+    if MeleeModsSystem._killAuraConn then
+        MeleeModsSystem._killAuraConn:Disconnect()
+        MeleeModsSystem._killAuraConn = nil
+    end
+    MeleeModsSystem.Hooked = false
+end
+
 --====================================================--
--- CACH?? DE ESTADO AVANZADO
+-- CACHE DE ESTADO AVANZADO
 --====================================================--
 local CachedState = {
     KeyActive = false,
@@ -1083,7 +1173,6 @@ local CachedState = {
     ToolTrackers = {},
     LastRaycastTime = {},
     PlayerDistanceCache = {},
-
     LastChamsColor = ESPConfig.ChamsColor,
     LocalPlayerRoot = nil,
     LastCameraPos = Vector3.new(0, 0, 0),
@@ -1102,7 +1191,7 @@ local PlayerESPActive = {}
 local CharacterPartCache = {}
 
 --====================================================--
--- ELEMENTOS GR�FICOS
+-- ELEMENTOS GRAFICOS
 --====================================================--
 local Graphics = {}
 
@@ -1115,65 +1204,16 @@ function Graphics.CreateFOVCircle()
     return FOVCircle
 end
 
-function Graphics.CreatePartBox()
+function Graphics.CreatePartBoxLines()
     local lines = {}
     for i = 1, 12 do
         local line = Drawing.new("Line")
+        line.Thickness = 2
+        line.Color = Color3.new(1, 1, 1)
         line.Visible = false
-        line.Thickness = 1.5
-        line.Color = Color3.fromRGB(255, 255, 255)
-        line.Transparency = 1
         lines[i] = line
     end
     return lines
-end
-
-local BoxEdges = {
-    {1,2}, {3,4}, {5,6}, {7,8},
-    {1,3}, {2,4}, {5,7}, {6,8},
-    {1,5}, {2,6}, {3,7}, {4,8},
-}
-
-local function UpdatePartBox(lines, part, color)
-    if not part or not part.Parent then
-        for _, l in ipairs(lines) do l.Visible = false end
-        return
-    end
-    local cf = part.CFrame
-    local size = part.Size
-    local half = size / 2
-    local corners = {
-        cf * CFrame.new(-half.X, -half.Y, -half.Z),
-        cf * CFrame.new( half.X, -half.Y, -half.Z),
-        cf * CFrame.new(-half.X,  half.Y, -half.Z),
-        cf * CFrame.new( half.X,  half.Y, -half.Z),
-        cf * CFrame.new(-half.X, -half.Y,  half.Z),
-        cf * CFrame.new( half.X, -half.Y,  half.Z),
-        cf * CFrame.new(-half.X,  half.Y,  half.Z),
-        cf * CFrame.new( half.X,  half.Y,  half.Z),
-    }
-    local cam = workspace.CurrentCamera
-    local screen = {}
-    local allOnScreen = true
-    for i, c in ipairs(corners) do
-        local pos, vis = cam:WorldToViewportPoint(c.Position)
-        screen[i] = Vector2.new(pos.X, pos.Y)
-        if not vis then allOnScreen = false end
-    end
-    if not allOnScreen then
-        for _, l in ipairs(lines) do l.Visible = false end
-        return
-    end
-    for i, edge in ipairs(BoxEdges) do
-        lines[i].From = screen[edge[1]]
-        lines[i].To = screen[edge[2]]
-        lines[i].Color = color
-        lines[i].Visible = true
-    end
-end
-
-local function HidePartBox(lines)
-    for _, l in ipairs(lines) do l.Visible = false end
 end
 
 function Graphics.CreatePredictionLine()
@@ -1189,7 +1229,7 @@ local PredictionLines = {}
 local PartBoxes = {}
 
 --====================================================--
--- CACH?? DE PARTES DEL PERSONAJE
+-- CACHE DE PARTES DEL PERSONAJE
 --====================================================--
 local PartCacheSystem = {}
 
@@ -1250,7 +1290,7 @@ function PartCacheSystem.Cleanup(player)
 end
 
 --====================================================--
--- SISTEMA DE DETECCI?"N DE ARMAS
+-- SISTEMA DE DETECCION DE ARMAS
 --====================================================--
 local WeaponSystem = {}
 WeaponSystem.HashDatabase = {}
@@ -1283,9 +1323,9 @@ function WeaponSystem.GenerateToolHash(Tool)
 end
 
 local WeaponNameOverrides = {
-    ["script"] = "Pu�os",
-    ["bisteck"] = "Pu�os",
-    ["725110"] = "Pu�os",
+    ["script"] = "Puños",
+    ["bisteck"] = "Puños",
+    ["725110"] = "Puños",
 }
 
 function WeaponSystem.ResolveName(tool, data)
@@ -1521,7 +1561,7 @@ function ToolTracker.GetTool(tracker)
 end
 
 --====================================================--
--- SISTEMA ESP MEJORADO CON L�MITE
+-- SISTEMA ESP MEJORADO CON LIMITE
 --====================================================--
 local ESPSystem = {}
 
@@ -1727,8 +1767,7 @@ function ESPSystem.CreatePlayerESP(char, player)
         local frameStartTime = tick()
 
         if not Utilities.ValidatePlayer(player) or not char or not char.Parent or not partCache.Humanoid or not partCache.Humanoid.Parent
-            or not partCache.HumanoidRootPart or not partCache.HumanoidRootPart.Parent
-            or Aiming.ExcludedPlayers[player.UserId] then
+            or not partCache.HumanoidRootPart or not partCache.HumanoidRootPart.Parent then
             pcall(function()
                 predictionLine:Remove()
                 billboard:Destroy()
@@ -1770,7 +1809,6 @@ function ESPSystem.CreatePlayerESP(char, player)
 
         local pos, onScreen = safeCamera:WorldToViewportPoint(partCache.HumanoidRootPart.Position)
         local isWhitelisted = Aiming.WhitelistedPlayers[player.UserId]
-        local isFriend = Aiming.FriendCheck and LocalPlayer:IsFriendsWith(player.UserId)
 
         if not onScreen then
             if billboard.Enabled then billboard.Enabled = false end
@@ -1781,7 +1819,7 @@ function ESPSystem.CreatePlayerESP(char, player)
         local dist = Utilities.SafeDistance(safeCamera.CFrame.Position, partCache.HumanoidRootPart.Position)
         CachedState.PlayerDistanceCache[player] = dist
 
-        -- Distance check: ocultar si est� lejos
+        -- Distance check: ocultar si esta lejos
         if dist > ESPConfig.MaxDistance then
             if billboard.Enabled then billboard.Enabled = false end
             if highlight.Enabled then highlight.Enabled = false end
@@ -1797,20 +1835,10 @@ function ESPSystem.CreatePlayerESP(char, player)
         healthPercentLabel.Visible = ESPConfig.HealthPercent
         toolsFrame.Visible = ESPConfig.Tool
 
-        local friendGreen = Color3.fromRGB(0, 255, 0)
-        local finalColor
-        if isWhitelisted then
-            highlight.FillColor = Aiming.WhitelistColor
-            finalColor = Aiming.WhitelistColor
-        elseif isFriend then
-            highlight.FillColor = friendGreen
-            finalColor = friendGreen
-        else
-            highlight.FillColor = ESPConfig.ChamsColor
-            finalColor = Color3.new(1, 1, 1)
-        end
+        highlight.FillColor = isWhitelisted and Aiming.WhitelistColor or ESPConfig.ChamsColor
+        local finalColor = isWhitelisted and Aiming.WhitelistColor or Color3.new(1, 1, 1)
 
-        if not isWhitelisted and not isFriend then
+        if not isWhitelisted then
             local eq = ToolTracker.GetTool(toolTracker)
             if eq then
                 local ok, d = pcall(function()
@@ -1931,7 +1959,7 @@ function ESPSystem.CreatePlayerESP(char, player)
             local eq = ToolTracker.GetTool(toolTracker)
             if eq then
                 local toolName = eq.Name:lower()
-                if toolName ~= "first" and toolName ~= "fist" and toolName ~= "punch" and toolName ~= "pu�o" then
+                if toolName ~= "first" and toolName ~= "fist" and toolName ~= "punch" and toolName ~= "puno" then
                     table.insert(items, {t = eq, e = true})
                 end
             end
@@ -1941,14 +1969,14 @@ function ESPSystem.CreatePlayerESP(char, player)
                 for _, t in ipairs(currentBackpack:GetChildren()) do
                     if t:IsA("Tool") then
                         local tName = t.Name:lower()
-                        if tName ~= "first" and tName ~= "fist" and tName ~= "punch" and tName ~= "pu�o" then
+                        if tName ~= "first" and tName ~= "fist" and tName ~= "punch" and tName ~= "puno" then
                             table.insert(items, {t = t, e = false})
                         end
                     end
                 end
             end
 
-            -- Crear/destruir slots din�micamente seg�n cantidad de tools
+            -- Crear/destruir slots dinamicamente segun cantidad de tools
             while #slots < #items do
                 local idx = #slots + 1
                 local toolLabel = Instance.new("TextLabel", toolsFrame)
@@ -1985,7 +2013,7 @@ function ESPSystem.CreatePlayerESP(char, player)
                 end
             end
 
-            -- Redimensionar billboard seg�n cantidad de tools visibles
+            -- Redimensionar billboard segun cantidad de tools visibles
             local visibleCount = #items
             local baseHeight = 36
             if ESPConfig.Health then baseHeight = baseHeight + 3 end
@@ -2014,7 +2042,7 @@ end
 --====================================================--
 local ItemDropESP = {}
 ItemDropESP.Drawings = {}   -- [item] = { label, tracer, box }
--- Carpetas comunes donde los juegos guardan items ca�dos en el mundo
+-- Carpetas comunes donde los juegos guardan items caidos en el mundo
 ItemDropESP.FolderNames = {
     "Drops", "ItemDrops", "DroppedItems",
     "Loot", "WorldItems", "DroppedTools",
@@ -2031,7 +2059,7 @@ local function ItemDrop_GetRoot(item)
 end
 
 local function ItemDrop_IsDropped(item)
-    -- Un item est� "ca�do" si no es descendiente de ning�n jugador
+    -- Un item esta "caido" si no es descendiente de ningun jugador
     if not item.Parent then return false end
     for _, p in ipairs(Players:GetPlayers()) do
         if p.Character and item:IsDescendantOf(p.Character) then return false end
@@ -2065,7 +2093,7 @@ local function ItemDrop_Scan()
         end
     end
 
-    -- 2) Tools directas en workspace (sin due�o de jugador)
+    -- 2) Tools directas en workspace (sin dueno de jugador)
     for _, child in ipairs(workspace:GetChildren()) do
         if child:IsA("Tool") and ItemDrop_IsDropped(child) then
             found[child] = true
@@ -2076,7 +2104,7 @@ local function ItemDrop_Scan()
 end
 
 function ItemDropESP.Update()
-    -- Si est� desactivado, ocultar todo y salir
+    -- Si esta desactivado, ocultar todo y salir
     if not ESPConfig.ItemDrop then
         for _, d in pairs(ItemDropESP.Drawings) do
             if d.label then d.label.Visible = false end
@@ -2119,7 +2147,7 @@ function ItemDropESP.Update()
             and Utilities.SafeDistance(root.Position, localRoot.Position)
             or math.huge
 
-        -- Ocultar si supera la distancia m�xima
+        -- Ocultar si supera la distancia maxima
         if dist > ESPConfig.ItemDropDistance then
             local d = ItemDropESP.Drawings[item]
             if d then
@@ -2141,7 +2169,7 @@ function ItemDropESP.Update()
             continue
         end
 
-        -- Crear los Drawing objects si a�n no existen
+        -- Crear los Drawing objects si aun no existen
         if not ItemDropESP.Drawings[item] then
             local label = Drawing.new("Text")
             label.Size     = 13
@@ -2263,7 +2291,7 @@ function ItemDropESP.Cleanup()
 end
 
 --====================================================--
--- SISTEMA DE GESTI?"N DE JUGADORES
+-- SISTEMA DE GESTION DE JUGADORES
 --====================================================--
     local PlayerManager = {}
 
@@ -2272,7 +2300,7 @@ end
         if PlayerESPActive[player] then return end
 
         PlayerESPActive[player] = true
-        PartBoxes[player] = Graphics.CreatePartBox()
+        PartBoxes[player] = Graphics.CreatePartBoxLines()
         PredictionLines[player] = Graphics.CreatePredictionLine()
 
         ConnectionManager.Add(player.CharacterAdded:Connect(function(char)
@@ -2289,7 +2317,9 @@ end
 function PlayerManager.RemovePlayer(player)
     PlayerESPActive[player] = nil
     if PartBoxes[player] then
-        for _, l in ipairs(PartBoxes[player]) do pcall(function() l:Remove() end) end
+        for _, line in ipairs(PartBoxes[player]) do
+            pcall(function() line:Remove() end)
+        end
         PartBoxes[player] = nil
     end
     if PredictionLines[player] then
@@ -2334,7 +2364,7 @@ local function GetCurrentPlayers()
     return Names
 end
 
--- Reemplazada con la versi�n de WALL CHECK FIX v1.0
+-- Reemplazada con la version de WALL CHECK FIX v1.0
 local function BuildRaycastBlacklist()
     local blacklist = {}
     if LocalPlayer.Character then
@@ -2428,7 +2458,7 @@ end
 local function UpdateEnemyList()
     Utilities.SafeTableClear(CachedState.ActiveEnemies)
     for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and not Aiming.WhitelistedPlayers[p.UserId] then
+        if p ~= LocalPlayer and not Aiming.WhitelistedPlayers[p.UserId] and not Aiming.ExcludedPlayers[p.UserId] then
             table.insert(CachedState.ActiveEnemies, p)
         end
     end
@@ -2480,16 +2510,6 @@ local function UpdateAllChamsColors()
 
     CachedState.LastChamsColor = ESPConfig.ChamsColor
     CachedState.LastColorUpdate = tick()
-
-    for player, _ in pairs(PartBoxes) do
-        local cache = PartCacheSystem.Get(player)
-        if cache and cache.character then
-            local highlight = cache.character:FindFirstChild("ESP_Highlight")
-            if highlight then
-                highlight.FillColor = ESPConfig.ChamsColor
-            end
-        end
-    end
 end
 
 --====================================================--
@@ -2563,7 +2583,7 @@ function AimbotSystem.FindTarget(Center)
 
         if not part then continue end
 
-        -- L?"GICA DE COMPROBACI?"N DE DISTANCIA (MAGNITUDE CHECK)
+        -- LOGICA DE COMPROBACION DE DISTANCIA (MAGNITUDE CHECK)
         local localRoot = CachedState.LocalPlayerRoot or (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart"))
         if Aiming.UseMagnitude and localRoot then
             if Utilities.SafeDistance(localRoot.Position, part.Position) > Aiming.MaxStuds then
@@ -2587,7 +2607,7 @@ function AimbotSystem.FindTarget(Center)
     return Target
 end
 
--- FIX: LockCamera corregido: detecta jugador desde character, usa la predicci�n con el player correcto y ajusta objetivo si est� sentado en un veh�culo
+-- FIX: LockCamera corregido: detecta jugador desde character, usa la prediccion con el player correcto y ajusta objetivo si esta sentado en un vehiculo
 
 function AimbotSystem.LockCamera(target)
     if not target or not Aiming.LockCamera then return end
@@ -2598,7 +2618,7 @@ function AimbotSystem.LockCamera(target)
     -- calcular aimPos inicial desde el part recibido
     local aimPos = target.Position
 
-    -- Predicci�n basada en el player del character
+    -- Prediccion basada en el player del character
     if Aiming.UsePredictiveAim then
         local player = Players:GetPlayerFromCharacter(target.Parent)
         if player then
@@ -2614,12 +2634,12 @@ function AimbotSystem.LockCamera(target)
     local char = target.Parent
     local hum = char and char:FindFirstChild("Humanoid")
 
-    -- Compensaci�n autom�tica: el juego solo aplica CameraOffset cuando
+    -- Compensacion automatica: el juego solo aplica CameraOffset cuando
     -- CameraSubject NO es el humanoid (ej: camera_part personalizado)
     local localChar = LocalPlayer.Character
     local localHum = localChar and localChar:FindFirstChildOfClass("Humanoid")
     local cam = workspace.CurrentCamera
-    if localHum and WeaponAimConfig.Enabled and cam.CameraSubject ~= localHum then
+    if localHum and cam.CameraSubject ~= localHum then
         local camOffset = localHum.CameraOffset
         if camOffset.Magnitude > 0.01 then
             aimPos = aimPos - safeCamera.CFrame:VectorToWorldSpace(camOffset)
@@ -2744,6 +2764,73 @@ function ItemAuraSystem.Cleanup()
     end
     Utilities.SafeTableClear(ItemAuraSystem.Connections)
     ItemAuraSystem.LastScan = 0
+end
+
+--====================================================--
+-- AUTO DROP ITEMS SYSTEM
+--====================================================--
+local AutoDropSystem = {}
+AutoDropSystem.LastScan = 0
+AutoDropSystem.ScanInterval = 0.5
+
+function AutoDropSystem.DropTool(tool)
+    if not tool or not tool.Parent then return end
+    local success, err = pcall(function()
+        local dropRemote = ReplicatedStorage:FindFirstChild("RemoteEvents") and
+            ReplicatedStorage.RemoteEvents:FindFirstChild("DropItem")
+        if dropRemote then
+            dropRemote:FireServer(tool)
+            return
+        end
+        local dropRemote2 = ReplicatedStorage:FindFirstChild("DropTool") or
+            ReplicatedStorage:FindFirstChild("Events"):FindFirstChild("Drop")
+        if dropRemote2 then
+            dropRemote2:FireServer(tool)
+            return
+        end
+        tool:Remove()
+    end)
+end
+
+function AutoDropSystem.GetToolRarity(tool)
+    local ok, data = pcall(WeaponSystem.GetToolData, tool)
+    if ok and data and data.Rarity then
+        return data.Rarity
+    end
+    local attrName = tool:GetAttribute("RarityName") or tool:GetAttribute("Rarity")
+    if attrName then return attrName end
+    return "Common"
+end
+
+function AutoDropSystem.Update()
+    if not AutoDropConfig.Enabled then return end
+    local currentTime = tick()
+    if currentTime - AutoDropSystem.LastScan < AutoDropSystem.ScanInterval then return end
+    AutoDropSystem.LastScan = currentTime
+    local backpack = LocalPlayer:FindFirstChild("Backpack")
+    if not backpack then return end
+    local threshold = AutoDropConfig.ThresholdRarity
+    local thresholdIndex = 0
+    for i, r in ipairs({"Common","Uncommon","Rare","Epic","Legendary","Omega"}) do
+        if r == threshold then thresholdIndex = i break end
+    end
+    if thresholdIndex <= 1 then return end
+    for _, tool in ipairs(backpack:GetChildren()) do
+        if not tool:IsA("Tool") then continue end
+        local rarity = AutoDropSystem.GetToolRarity(tool)
+        local rarityIndex = 0
+        for i, r in ipairs({"Common","Uncommon","Rare","Epic","Legendary","Omega"}) do
+            if r == rarity then rarityIndex = i break end
+        end
+        if rarityIndex < thresholdIndex then
+            AutoDropSystem.DropTool(tool)
+            task.wait(0.05)
+        end
+    end
+end
+
+function AutoDropSystem.Cleanup()
+    AutoDropSystem.LastScan = 0
 end
 
 --====================================================--
@@ -3051,7 +3138,7 @@ end
 
 
 --====================================================--
--- CREACI?"N DE LA INTERFAZ SCRIPTHUB v6.6.0
+-- CREACION DE LA INTERFAZ SCRIPTHUB v6.6.0
 --====================================================--
 
 local TweenService = game:GetService("TweenService")
@@ -4614,6 +4701,8 @@ createKeybind(aimbotCard, "Aim Key", Aiming.KeyString, function(k)
     if k then Aiming.KeyString = k.Name end
 end)
 createDropdown(aimbotCard, "Aim Mode", {"Cabeza", "Cuerpo", "Legit"}, Aiming.AimMode, function(v) Aiming.AimMode = v end)
+-- Camera Snap always active (toggle removed)
+-- Weapon Camera Fix always active while aiming
 
 createSectionHeader(aimContent, "TARGETING")
 targetingCard = createCard(aimContent)
@@ -4634,10 +4723,10 @@ createToggle(cameraCard, "Dynamic FOV", Aiming.DynamicFOV, function(v) Aiming.Dy
 
 createSectionHeader(aimContent, "FOV VISUALS")
 fovVisualCard = createCard(aimContent)
-createInfoRow(fovVisualCard, "+", "FOV Display", "FOV circle and head dots")
+createInfoRow(fovVisualCard, "+", "FOV Display", "FOV circle and aim box")
 createToggle(fovVisualCard, "Show FOV Circle", Aiming.ShowFOV, function(v) Aiming.ShowFOV = v end)
 createSlider(fovVisualCard, "FOV Radius", 10, 800, Aiming.FOV, function(v) Aiming.FOV = v end)
-createToggle(fovVisualCard, "Target Part Highlight", Aiming.HeadDotESP, function(v) Aiming.HeadDotESP = v end)
+createToggle(fovVisualCard, "PartBox Wireframe", ESPConfig.PartBox, function(v) ESPConfig.PartBox = v end)
 
 createSectionHeader(aimContent, "WHITELIST")
 whitelistCard = createCard(aimContent)
@@ -4815,6 +4904,14 @@ createMultiDropdown(auraCard, "Rarity Filter", {"Common","Uncommon","Rare","Epic
     ItemAuraConfig.FilterByRarity = true
 end)
 
+createSectionHeader(miscContent, "AUTO DROP")
+autoDropCard = createCard(miscContent)
+createInfoRow(autoDropCard, "+", "Auto Drop Items", "Descarta items de rareza baja del inventario")
+createToggle(autoDropCard, "Auto Drop", AutoDropConfig.Enabled, function(v) AutoDropConfig.Enabled = v end)
+createDropdown(autoDropCard, "Minimo Rarity", {"Common","Uncommon","Rare","Epic","Legendary","Omega"}, AutoDropConfig.ThresholdRarity, function(v)
+    AutoDropConfig.ThresholdRarity = v
+end)
+
 createSectionHeader(miscContent, "SCRIPTS EXTRA")
 scriptsCard = createCard(miscContent)
 createInfoRow(scriptsCard, "+", "Skip Slider", "Salta el slider automaticamente")
@@ -4841,10 +4938,15 @@ createSectionHeader(weaponsContent, "MELEE MODS")
 meleeModsCard = createCard(weaponsContent)
 createInfoRow(meleeModsCard, "+", "Kill Aura", "Ataca automaticamente a jugadores cercanos")
 createToggle(meleeModsCard, "Kill Aura", MeleeModsConfig.KillAura, function(v) MeleeModsSystem.ToggleKillAura(v) end)
+createToggle(meleeModsCard, "Visualize Range", MeleeModsConfig.Visualize, function(v) MeleeModsConfig.Visualize = v end)
 if FeatureCompat.MeleeExtended then
-    createInfoRow(meleeModsCard, "+", "Extended Range", "Aumenta el rango del melee")
+    createInfoRow(meleeModsCard, "+", "Melee Modifiers", "Modifica stats del melee")
     createToggle(meleeModsCard, "Extended Range", MeleeModsConfig.ExtendedRange, function(v) MeleeModsConfig.ExtendedRange = v if v then MeleeModsSystem.Setup() end end)
-    createSlider(meleeModsCard, "Melee Range", 5, 50, MeleeModsConfig.Range, function(v) MeleeModsConfig.Range = v end)
+    createSlider(meleeModsCard, "Range", 1, 20, MeleeModsConfig.Range, function(v) MeleeModsConfig.Range = v end)
+    createSlider(meleeModsCard, "Damage Multiplier", 1, 20, MeleeModsConfig.Damage, function(v) MeleeModsConfig.Damage = v MeleeModsSystem.Setup() end)
+    createSlider(meleeModsCard, "Speed", 0.1, 5, MeleeModsConfig.Speed, function(v) MeleeModsConfig.Speed = v if v then MeleeModsSystem.Setup() end end)
+    createSlider(meleeModsCard, "Cone Angle", 30, 360, MeleeModsConfig.ConeAngle, function(v) MeleeModsConfig.ConeAngle = v MeleeModsSystem.Setup() end)
+    createToggle(meleeModsCard, "Radius-Only HitReg", MeleeModsConfig.NoConeCheck, function(v) MeleeModsConfig.NoConeCheck = v if v then MeleeModsSystem.Setup() end end)
 else
     createDisabledRow(meleeModsCard, "!", "Extended Range", "Requiere hookfunction - no disponible en " .. ExecutorName)
 end
@@ -4960,7 +5062,7 @@ end))
 print("[PYTHON_S] ScriptHub UI v6.6.2 Loaded Successfully")
 
 --====================================================--
--- FUNCI?"N DE LIMPIEZA COMPLETA
+-- FUNCION DE LIMPIEZA COMPLETA
 --====================================================--
 local function FullCleanup()
     local sgGui = game.CoreGui:FindFirstChild("ScriptHubUI")
@@ -4968,7 +5070,9 @@ local function FullCleanup()
     ConnectionManager.CleanupAll()
 
     for _, lines in pairs(PartBoxes) do
-        for _, l in ipairs(lines) do pcall(function() l:Remove() end) end
+        for _, line in ipairs(lines) do
+            pcall(function() line:Remove() end)
+        end
     end
     Utilities.SafeTableClear(PartBoxes)
 
@@ -5007,8 +5111,14 @@ local function FullCleanup()
     SpeedBoostSystem.Cleanup()
     FlyJumpSystem.Cleanup()
 
+    -- Limpiar Melee Mods
+    MeleeModsSystem.Cleanup()
+
     -- Limpiar Automation Systems
     PromptSkipSystem.Cleanup()
+
+    -- Limpiar Auto Drop
+    AutoDropSystem.Cleanup()
 
     -- Limpiar Performance Systems
     LightingSystem.Cleanup()
@@ -5073,46 +5183,115 @@ ConnectionManager.Add(RunService.RenderStepped:Connect(function()
 
     -- SelectionBox REMOVIDO (no se muestra)
 
-    for player, lines in pairs(PartBoxes) do
-        local showBox = false
-
-        if Aiming.HeadDotESP and Utilities.ValidatePlayer(player) then
-            local cache = PartCacheSystem.Get(player)
-            if cache then
-                local isFriend = Aiming.FriendCheck and LocalPlayer:IsFriendsWith(player.UserId)
-                local isTeam = Aiming.TeamCheck and player.Team == LocalPlayer.Team
-                local isWhitelisted = Aiming.WhitelistedPlayers[player.UserId]
-
-                if isWhitelisted or isFriend or (not isFriend and not isTeam) then
-                    local part = nil
-                    if Aiming.AimMode == "Cabeza" then
-                        part = cache.Head
-                    elseif Aiming.AimMode == "Cuerpo" then
-                        part = cache.HumanoidRootPart
-                    else
-                        part = cache.Head or cache.HumanoidRootPart
-                    end
-                    if part and part.Parent then
-                        local targetPlayer = CachedState.CurrentTarget and Players:GetPlayerFromCharacter(CachedState.CurrentTarget.Parent)
-                        local color
-                        if targetPlayer == player then
-                            color = Color3.fromRGB(255, 0, 0)
-                        elseif isWhitelisted then
-                            color = Color3.fromRGB(0, 80, 255)
-                        elseif isFriend then
-                            color = Color3.fromRGB(0, 255, 0)
-                        else
-                            color = Color3.fromRGB(255, 255, 255)
-                        end
-                        UpdatePartBox(lines, part, color)
-                        showBox = true
-                    end
+    -- PartBox 3D Wireframe (Head CFrame)
+    if ESPConfig.PartBox then
+        for player, lines in pairs(PartBoxes) do
+            if not Utilities.ValidatePlayer(player) then
+                for _, line in ipairs(lines) do
+                    line.Visible = false
                 end
+                continue
+            end
+
+            local cache = PartCacheSystem.Get(player)
+            if not cache or not cache.Humanoid or cache.Humanoid.Health <= 0 then
+                for _, line in ipairs(lines) do
+                    line.Visible = false
+                end
+                continue
+            end
+
+            local isHeadMode = (Aiming.AimMode == "Cabeza")
+            local anchor = isHeadMode and cache.Head or cache.HumanoidRootPart
+            if not anchor then
+                for _, line in ipairs(lines) do
+                    line.Visible = false
+                end
+                continue
+            end
+
+            local cf = anchor.CFrame
+            local w, h, d
+            if isHeadMode then
+                local hs = anchor.Size
+                w = math.max(hs.X, hs.Z) * 1.15
+                h = hs.Y * 1.15
+                d = math.max(hs.X, hs.Z) * 1.15
+            else
+                local ut = cache.character:FindFirstChild("UpperTorso")
+                local lt = cache.character:FindFirstChild("LowerTorso")
+                local torsoH = 2.5
+                local torsoW = 2.5
+                local torsoD = 1.5
+                if ut then
+                    torsoW = ut.Size.X * 1.3
+                    torsoD = ut.Size.Z * 1.3
+                    torsoH = (ut.Size.Y + (lt and lt.Size.Y or 1.5)) * 1.2
+                end
+                w = torsoW
+                h = torsoH
+                d = torsoD
+            end
+
+            local hw, hh, hd = w / 2, h / 2, d / 2
+            local corners = {
+                cf * CFrame.new(-hw, hh, -hd),
+                cf * CFrame.new(hw, hh, -hd),
+                cf * CFrame.new(hw, hh, hd),
+                cf * CFrame.new(-hw, hh, hd),
+                cf * CFrame.new(-hw, -hh, -hd),
+                cf * CFrame.new(hw, -hh, -hd),
+                cf * CFrame.new(hw, -hh, hd),
+                cf * CFrame.new(-hw, -hh, hd),
+            }
+
+            local screenPositions = {}
+            for i = 1, 8 do
+                local pos, onScreen = safeCamera:WorldToViewportPoint(corners[i].Position)
+                screenPositions[i] = Vector2.new(pos.X, pos.Y)
+            end
+
+            local anchorPos, anchorOnScreen = safeCamera:WorldToViewportPoint(anchor.Position)
+            if not anchorOnScreen then
+                for _, line in ipairs(lines) do
+                    line.Visible = false
+                end
+                continue
+            end
+
+            local edges = {
+                {1, 2}, {2, 3}, {3, 4}, {4, 1},
+                {5, 6}, {6, 7}, {7, 8}, {8, 5},
+                {1, 5}, {2, 6}, {3, 7}, {4, 8},
+            }
+
+            local isWhitelisted = Aiming.WhitelistedPlayers[player.UserId]
+            local isTarget = CachedState.CurrentTarget and CachedState.CurrentTarget.Parent == cache.character
+            local isFriend = Aiming.FriendCheck and LocalPlayer:IsFriendsWith(player.UserId)
+
+            local boxColor
+            if isWhitelisted then
+                boxColor = Aiming.WhitelistColor
+            elseif isTarget then
+                boxColor = Color3.new(1, 0, 0)
+            elseif isFriend then
+                boxColor = Color3.new(0, 1, 0)
+            else
+                boxColor = Color3.new(1, 1, 1)
+            end
+
+            for i, edge in ipairs(edges) do
+                lines[i].From = screenPositions[edge[1]]
+                lines[i].To = screenPositions[edge[2]]
+                lines[i].Color = boxColor
+                lines[i].Visible = true
             end
         end
-
-        if not showBox then
-            HidePartBox(lines)
+    else
+        for _, lines in pairs(PartBoxes) do
+            for _, line in ipairs(lines) do
+                line.Visible = false
+            end
         end
     end
 
@@ -5128,6 +5307,9 @@ ConnectionManager.Add(RunService.RenderStepped:Connect(function()
 
     -- Item Aura
     ItemAuraSystem.Update()
+
+    -- Auto Drop Items
+    AutoDropSystem.Update()
 end))
 
 --====================================================--
@@ -5172,7 +5354,7 @@ task.spawn(function()
 end)
 
 --====================================================--
--- NOTIFICACI?"N DE INICIO
+-- NOTIFICACION DE INICIO
 --====================================================--
 AlertSystem.CreateAlert(
     "PYTHON_S v6.6.2 PESADO",
