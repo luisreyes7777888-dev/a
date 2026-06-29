@@ -4254,53 +4254,38 @@ createToggle(fovVisualCard, "Target Part Highlight", Aiming.HeadDotESP, function
 
 createSectionHeader(aimContent, "WHITELIST")
 local whitelistCard = createCard(aimContent)
-createInfoRow(whitelistCard, "🛡", "Player Protection", "Whitelist players from aimbot")
-createLabel(whitelistCard, "Type player names separated by commas", 18)
-createTextbox(whitelistCard, "Whitelist Players", "Player1, Player2", function(text)
+createInfoRow(whitelistCard, "+", "Player Protection", "Selecciona jugadores para proteger del aimbot")
+
+local WhitelistDropdown
+WhitelistDropdown = createMultiDropdown(whitelistCard, "Seleccionar Jugadores", GetCurrentPlayers(), {}, function(selected)
     Utilities.SafeCallback(function()
         Utilities.SafeTableClear(Aiming.WhitelistedPlayers)
-        if text and text ~= "" then
-            for name in text:gmatch("[^,]+") do
-                name = name:match("^%s*(.-)%s*$")
-                if name ~= "" then
-                    local p = Players:FindFirstChild(name)
-                    if p then
-                        Aiming.WhitelistedPlayers[p.UserId] = true
-                    end
+        if not selected then return end
+        for name, isActive in pairs(selected) do
+            if isActive then
+                local p = Players:FindFirstChild(name)
+                if p then
+                    Aiming.WhitelistedPlayers[p.UserId] = true
                 end
             end
+        end
+    end)
+end)
+
+createButton(whitelistCard, "Actualizar Lista", function()
+    Utilities.SafeCallback(function()
+        local current = GetCurrentPlayers()
+        if WhitelistDropdown and WhitelistDropdown.Refresh then
+            WhitelistDropdown:Refresh(current)
         end
     end)
 end)
 createButton(whitelistCard, "Clear Whitelist", function()
     Utilities.SafeCallback(function()
         Utilities.SafeTableClear(Aiming.WhitelistedPlayers)
-    end)
-end)
-
-createSectionHeader(aimContent, "EXCLUDE PLAYERS")
-local excludeCard = createCard(aimContent)
-createInfoRow(excludeCard, "X", "Player Exclusion", "Hide players from ESP and aimbot")
-createLabel(excludeCard, "Type player names separated by commas", 18)
-createTextbox(excludeCard, "Exclude Players", "Player1, Player2", function(text)
-    Utilities.SafeCallback(function()
-        Utilities.SafeTableClear(Aiming.ExcludedPlayers)
-        if text and text ~= "" then
-            for name in text:gmatch("[^,]+") do
-                name = name:match("^%s*(.-)%s*$")
-                if name ~= "" then
-                    local p = Players:FindFirstChild(name)
-                    if p then
-                        Aiming.ExcludedPlayers[p.UserId] = true
-                    end
-                end
-            end
+        if WhitelistDropdown and WhitelistDropdown.Refresh then
+            WhitelistDropdown:Refresh({})
         end
-    end)
-end)
-createButton(excludeCard, "Clear Excludes", function()
-    Utilities.SafeCallback(function()
-        Utilities.SafeTableClear(Aiming.ExcludedPlayers)
     end)
 end)
 
