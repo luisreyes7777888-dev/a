@@ -1,4 +1,3 @@
-`lua
 --====================================================--
 -- PYTHON_S - SCRIPT v6.6.2 (MODO PESADO)
 -- Version: 6.6.2 (Pesado)
@@ -8,7 +7,6 @@
 --  - NUEVO: Gun Mods: No Recoil, No Spread, Fire Rate, Automatic, No Scope.
 --  - NUEVO: Melee Mods: Kill Aura, Extended Range con slider.
 --  - FIX: Out of local registers fix (wrapped tabs in do...end blocks).
---  - FIX: StreamingEnabled ESP fix (auto-restore ESP on stream-in).
 --  - REMOVED: Magic Bullet system.
 --  - MANTENIDO: Todo el sistema de aimbot, ESP, item aura, etc.
 --====================================================--
@@ -852,6 +850,10 @@ local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
 --====================================================--
+-- UI FRAMEWORK: ScriptHub Custom UI (sin dependencias externas)
+--====================================================--
+
+--====================================================--
 -- CONFIGURACION AIMBOT MEJORADA
 --====================================================--
 local Aiming = {
@@ -941,6 +943,7 @@ local PerfConfig = {
     RemoveDetails = false,
 }
 
+--====================================================--
 --====================================================--
 -- WEAPON CAMERA OFFSET (solo se aplica cuando hay arma equipada)
 --====================================================--
@@ -1185,7 +1188,6 @@ local CachedState = {
 }
 
 local PlayerESPActive = {}
-local PlayerInitialized = {}
 local CharacterPartCache = {}
 
 --====================================================--
@@ -1579,11 +1581,8 @@ function ESPSystem.CreatePlayerESP(char, player)
     end
 
     if char:FindFirstChild("ESP_Billboard") then
-        PlayerESPActive[player] = true
         return
     end
-
-    PlayerESPActive[player] = true
 
     local partCache = nil
     for _ = 1, 30 do
@@ -1633,7 +1632,7 @@ function ESPSystem.CreatePlayerESP(char, player)
         cornerLines[i] = line
     end
 
-    -- Box (BoxHandleAdornment)
+        -- Box (BoxHandleAdornment)
     local box3D = Instance.new("BoxHandleAdornment")
     box3D.AlwaysOnTop = true
     box3D.ZIndex = 1
@@ -1912,7 +1911,7 @@ function ESPSystem.CreatePlayerESP(char, player)
             end
         end
 
-        -- Box (BoxHandleAdornment)
+    -- Box (BoxHandleAdornment)
         if ESPConfig.Box then
             local hrp = char:FindFirstChild("HumanoidRootPart")
             if hrp then
@@ -2295,34 +2294,29 @@ end
 --====================================================--
 -- SISTEMA DE GESTION DE JUGADORES
 --====================================================--
-local PlayerManager = {}
+    local PlayerManager = {}
 
-function PlayerManager.InitPlayer(player)
-    if player == LocalPlayer then return end
-    if PlayerInitialized[player] then return end
-    PlayerInitialized[player] = true
+    function PlayerManager.InitPlayer(player)
+        if player == LocalPlayer then return end
+        if PlayerESPActive[player] then return end
 
-    if not PartBoxes[player] then
+        PlayerESPActive[player] = true
         PartBoxes[player] = Graphics.CreatePartBoxLines()
-    end
-    if not PredictionLines[player] then
         PredictionLines[player] = Graphics.CreatePredictionLine()
-    end
 
-    ConnectionManager.Add(player.CharacterAdded:Connect(function(char)
-        task.wait(0.5)
-        ESPSystem.CleanupBillboards(char)
-        ESPSystem.CreatePlayerESP(char, player)
-    end))
+        ConnectionManager.Add(player.CharacterAdded:Connect(function(char)
+            task.wait(0.5)
+            ESPSystem.CleanupBillboards(char)
+            ESPSystem.CreatePlayerESP(char, player)
+        end))
 
-    if player.Character then
+        if player.Character then
         ESPSystem.CreatePlayerESP(player.Character, player)
     end
 end
 
 function PlayerManager.RemovePlayer(player)
     PlayerESPActive[player] = nil
-    PlayerInitialized[player] = nil
     if PartBoxes[player] then
         for _, line in ipairs(PartBoxes[player]) do
             pcall(function() line:Remove() end)
@@ -2599,7 +2593,7 @@ function AimbotSystem.FindTarget(Center)
         end
 
         local safeCamera = Utilities.GetSafeCamera()
-        if not safeCamera then return end
+        if not safeCamera then continue end
 
         local screenPos, onScreen = safeCamera:WorldToViewportPoint(part.Position)
         if onScreen then
@@ -3142,6 +3136,7 @@ function PromptSkipSystem.Cleanup()
         PromptSkipSystem.Connection = nil
     end
 end
+
 
 --====================================================--
 -- CREACION DE LA INTERFAZ SCRIPTHUB v6.6.0
@@ -5097,7 +5092,6 @@ local function FullCleanup()
     Utilities.SafeTableClear(CachedState.PlayerDistanceCache)
     Utilities.SafeTableClear(CachedState.ActiveEnemies)
     Utilities.SafeTableClear(PlayerESPActive)
-    Utilities.SafeTableClear(PlayerInitialized)
 
     pcall(function() FOVCircle:Remove() end)
 
@@ -5145,26 +5139,6 @@ ConnectionManager.Add(RunService.RenderStepped:Connect(function()
 
     if currentTime - CachedState.LastEnemyUpdate >= ScriptConfig.EnemyCacheUpdateRate then
         UpdateEnemyList()
-        
-        -- Solucion para StreamingEnabled: Re-verifica periodicamente jugadores y recrea la ESP si fue destruida por distancia
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player ~= LocalPlayer then
-                if Utilities.ValidatePlayer(player) then
-                    if not PlayerESPActive[player] then
-                        if not PartBoxes[player] then
-                            PartBoxes[player] = Graphics.CreatePartBoxLines()
-                        end
-                        if not PredictionLines[player] then
-                            PredictionLines[player] = Graphics.CreatePredictionLine()
-                        end
-                        task.spawn(function()
-                            ESPSystem.CreatePlayerESP(player.Character, player)
-                        end)
-                    end
-                end
-            end
-        end
-        
         CachedState.LastEnemyUpdate = currentTime
     end
 
