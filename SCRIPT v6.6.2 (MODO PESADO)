@@ -1810,7 +1810,8 @@ function ESPSystem.CreatePlayerESP(char, player)
         local pos, onScreen = safeCamera:WorldToViewportPoint(partCache.HumanoidRootPart.Position)
         local isWhitelisted = Aiming.WhitelistedPlayers[player.UserId]
 
-        if not onScreen then
+        -- FIX: Solo ocultar si esta detras de la camara (Z <= 0)
+        if pos.Z <= 0 then
             if billboard.Enabled then billboard.Enabled = false end
             if highlight.Enabled then highlight.Enabled = false end
             return
@@ -1865,7 +1866,7 @@ function ESPSystem.CreatePlayerESP(char, player)
                 if partA and partB then
                     local posA, onA = safeCamera:WorldToViewportPoint(partA.Position)
                     local posB, onB = safeCamera:WorldToViewportPoint(partB.Position)
-                    if onA and onB then
+                    if posA.Z > 0 and posB.Z > 0 then
                         line.From = Vector2.new(posA.X, posA.Y)
                         line.To = Vector2.new(posB.X, posB.Y)
                         line.Color = espColor
@@ -5252,7 +5253,8 @@ ConnectionManager.Add(RunService.RenderStepped:Connect(function()
             end
 
             local anchorPos, anchorOnScreen = safeCamera:WorldToViewportPoint(anchor.Position)
-            if not anchorOnScreen then
+            -- FIX: Solo ocultar si esta detras de la camara
+            if anchorPos.Z <= 0 then
                 for _, line in ipairs(lines) do
                     line.Visible = false
                 end
@@ -5374,5 +5376,3 @@ if isXeno then
 end
 
 Utilities.Log("Script v6.6.2 PESADO iniciado correctamente", "INFO")
-
-
