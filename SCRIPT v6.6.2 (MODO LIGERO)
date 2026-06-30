@@ -835,7 +835,7 @@ local ESPConfig = {
     CornerBox = false,
     Box = false,
     -- OPTIMIZACIÓN ESP
-    MaxDistance = 3500,
+    MaxDistance = 0,
     UpdateInterval = 0.1,
     -- ITEM DROP ESP v6.5.1
     ItemDrop = false,
@@ -1546,7 +1546,7 @@ function ESPSystem.CreatePlayerESP(char, player)
         CachedState.PlayerDistanceCache[player] = dist
 
         -- Distance check: ocultar si está lejos
-        if dist > ESPConfig.MaxDistance then
+        if ESPConfig.MaxDistance > 0 and dist > ESPConfig.MaxDistance then
             if billboard.Enabled then billboard.Enabled = false end
             if highlight.Enabled then highlight.Enabled = false end
             return
@@ -1876,7 +1876,7 @@ function ItemDropESP.Update()
             or math.huge
 
         -- Ocultar si supera la distancia máxima
-        if dist > ESPConfig.ItemDropDistance then
+        if ESPConfig.ItemDropDistance > 0 and dist > ESPConfig.ItemDropDistance then
             local d = ItemDropESP.Drawings[item]
             if d then
                 if d.label then d.label.Visible = false end
@@ -4061,7 +4061,19 @@ local function createMultiDropdown(parent, title, options, defaults, callback)
     dropdownBtn.MouseButton1Click:Connect(function()
         if isOpen then closeMenu() else openMenu() end
     end)
-    return {Selected = selected, Update = updateText}
+    local function refresh(newOptions)
+        optRef.items = newOptions
+        if isOpen and dropdownMenu then
+            for i, d in ipairs(OpenDropdowns) do
+                if d == dropdownMenu then table.remove(OpenDropdowns, i) break end
+            end
+            pcall(function() dropdownMenu:Destroy() end)
+            dropdownMenu = nil
+            isOpen = false
+        end
+        updateText()
+    end
+    return {Selected = selected, Update = updateText, Refresh = refresh}
 end
 
 local function createLabel(parent, text, size)
@@ -4276,7 +4288,7 @@ createButton(whitelistCard, "Actualizar Lista", function()
     Utilities.SafeCallback(function()
         local current = GetCurrentPlayers()
         if WhitelistDropdown and WhitelistDropdown.Refresh then
-            WhitelistDropdown:Refresh(current)
+            WhitelistDropdown.Refresh(current)
         end
     end)
 end)
@@ -4284,7 +4296,7 @@ createButton(whitelistCard, "Clear Whitelist", function()
     Utilities.SafeCallback(function()
         Utilities.SafeTableClear(Aiming.WhitelistedPlayers)
         if WhitelistDropdown and WhitelistDropdown.Refresh then
-            WhitelistDropdown:Refresh({})
+            WhitelistDropdown.Refresh(GetCurrentPlayers())
         end
     end)
 end)
@@ -4314,7 +4326,7 @@ createSectionHeader(visualsContent, "ITEM DROP ESP")
 local itemDropCard = createCard(visualsContent)
 createInfoRow(itemDropCard, "📦", "Item Drops", "See dropped items in the world")
 createToggle(itemDropCard, "Item Drop ESP", ESPConfig.ItemDrop, function(v) ESPConfig.ItemDrop = v end)
-createSlider(itemDropCard, "Max Distance", 50, 1000, ESPConfig.ItemDropDistance, function(v) ESPConfig.ItemDropDistance = v end)
+createSlider(itemDropCard, "Max Distance", 0, 10000, ESPConfig.ItemDropDistance, function(v) ESPConfig.ItemDropDistance = v end)
 createToggle(itemDropCard, "Item Tracers", ESPConfig.ItemDropTracers, function(v) ESPConfig.ItemDropTracers = v end)
 createToggle(itemDropCard, "Item Box 3D", ESPConfig.ItemDropBox, function(v) ESPConfig.ItemDropBox = v end)
 
@@ -4331,8 +4343,132 @@ end)
 createSectionHeader(visualsContent, "OPTIMIZATION")
 local espOptCard = createCard(visualsContent)
 createInfoRow(espOptCard, "⚡", "ESP Performance", "Rendering optimization")
-createSlider(espOptCard, "Max ESP Distance", 100, 5000, ESPConfig.MaxDistance, function(v) ESPConfig.MaxDistance = v end)
+createSlider(espOptCard, "Max ESP Distance", 0, 50000, ESPConfig.MaxDistance, function(v) ESPConfig.MaxDistance = v end)
 createSlider(espOptCard, "Update Interval (ms)", 16, 200, math.floor(ESPConfig.UpdateInterval * 1000), function(v) ESPConfig.UpdateInterval = v / 1000 end)
+
+-- ============================================================
+-- REINICIAR ESP (boton dentro de la pestaña VISUALS)
+-- ============================================================
+createSectionHeader(visualsContent, "RESET")
+local espResetCard = createCard(visualsContent)
+createInfoRow(espResetCard, "+", "Reiniciar ESP", "Reconstruye el ESP sin reiniciar el script")
+createButton(espResetCard, "Reiniciar ESP", function()
+    Utilities.SafeCallback(function()
+
+        -- 1. Desactivar actualizacion del ESP temporalmente
+        local prevInterval = ESPConfig.UpdateInterval
+        ESPConfig.UpdateInterval = math.huge
+
+        -- 2. Recorrer todos los jugadores y eliminar el ESP existente
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player == LocalPlayer then continue end
+
+            -- 2a. Eliminar BillboardGui y Highlight del character
+            local char = player.Character
+            if char then
+                -- BillboardGui
+                local billboard = char:FindFirstChild("ESP_Billboard")
+                if billboard then pcall(function() billboard:Destroy() end) end
+
+                -- Highlight
+                local highlight = char:FindFirstChild("ESP_Highlight")
+                if highlight then pcall(function() highlight:Destroy() end) end
+
+                -- Cualquier objeto ESP residual
+                for _, desc in ipairs(char:GetDescendants()) do
+                    if desc:IsA("BillboardGui") then
+                        pcall(function() desc:Destroy() end)
+                    end
+                    if desc:IsA("Highlight") then
+                        pcall(function() desc:Destroy() end)
+                    end
+                    if desc:IsA("SelectionBox") then
+                        pcall(function() desc:Destroy() end)
+                    end
+                end
+            end
+
+            -- 2b. Drawing API: PartBoxes (lineas wireframe 3D)
+            if PartBoxes[player] then
+                for _, line in ipairs(PartBoxes[player]) do
+                    pcall(function() line:Remove() end)
+                end
+                PartBoxes[player] = nil
+            end
+
+            -- 2c. Drawing API: PredictionLines
+            if PredictionLines[player] then
+                pcall(function() PredictionLines[player]:Remove() end)
+                PredictionLines[player] = nil
+            end
+
+        end
+
+        -- 3. Limpiar tablas relacionadas con el ESP
+        Utilities.SafeTableClear(PlayerESPActive)
+        Utilities.SafeTableClear(CachedState.PlayerDistanceCache)
+        Utilities.SafeTableClear(CachedState.LastVisibility)
+
+        -- Limpiar CharacterPartCache y sus conexiones internas
+        for player, _ in pairs(CharacterPartCache) do
+            PartCacheSystem.Cleanup(player)
+        end
+        Utilities.SafeTableClear(CharacterPartCache)
+
+        -- Limpiar historial de prediccion
+        Utilities.SafeTableClear(PredictionSystem.TargetHistory)
+
+        -- 4. Esperar a que Roblox sincronice personajes
+        task.wait(0.5)
+
+        -- 5. Recorrer jugadores y reconstruir el ESP para cada uno valido
+        local rebuilt = 0
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player == LocalPlayer then continue end
+
+            -- Verificar requisitos minimos
+            if not Utilities.ValidatePlayer(player) then continue end
+
+            local char = player.Character
+            if not char then continue end
+
+            local humanoid = char:FindFirstChild("Humanoid")
+            if not humanoid then continue end
+
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            if not hrp then continue end
+
+            -- Evitar ESP duplicado
+            if char:FindFirstChild("ESP_Billboard") then continue end
+            if PlayerESPActive[player] then continue end
+
+            -- Recrear Drawing objects para este jugador
+            PlayerESPActive[player] = true
+            PartBoxes[player] = Graphics.CreatePartBox()
+            PredictionLines[player] = Graphics.CreatePredictionLine()
+
+            -- Recrear el ESP usando la funcion existente
+            task.spawn(function()
+                ESPSystem.CleanupBillboards(char)
+                ESPSystem.CreatePlayerESP(char, player)
+            end)
+
+            rebuilt = rebuilt + 1
+        end
+
+        -- 6. Restaurar el intervalo de actualizacion del ESP
+        ESPConfig.UpdateInterval = prevInterval
+
+        -- Notificacion de resultado
+        AlertSystem.CreateAlert(
+            "ESP Reiniciado",
+            rebuilt .. " jugador(es) reconstruido(s) correctamente",
+            4,
+            1
+        )
+
+    end)
+end)
 
 -- ============================================================
 -- PLAYER TAB (MOVEMENT + WORLD merged)
