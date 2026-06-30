@@ -1781,11 +1781,22 @@ function ESPSystem.CreatePlayerESP(char, player)
                 pcall(function() box3D:Destroy() end)
             end)
             if healthConn then healthConn:Disconnect() end
-            PredictionLines[player] = nil
             ToolTracker.Cleanup(toolTracker)
-            PartCacheSystem.Cleanup(player)
+            -- GUARD: solo limpiar el cache global si aun pertenece a ESTE char.
+            -- Evita destruir el cache de un ESP recien creado por streaming concurrente
+            -- (GetPropertyChangedSignal puede haber creado un nuevo ESP antes de que
+            -- este RenderStepped detecte el estado invalido del char anterior).
+            local currentCache = CharacterPartCache[player]
+            if currentCache and currentCache.character == char then
+                PartCacheSystem.Cleanup(player)
+            end
             PredictionSystem.Cleanup(player)
-            PlayerESPActive[player] = nil
+            -- Solo limpiar PredictionLines y PlayerESPActive si el jugador salio del servidor.
+            -- Si sigue conectado, GetPropertyChangedSignal recreara el ESP al regresar.
+            if not player.Parent then
+                PredictionLines[player] = nil
+                PlayerESPActive[player] = nil
+            end
             if conn then conn:Disconnect() end
             return
         end
@@ -2304,15 +2315,36 @@ end
         PartBoxes[player] = Graphics.CreatePartBoxLines()
         PredictionLines[player] = Graphics.CreatePredictionLine()
 
+        -- CharacterAdded: cubre respawn real del servidor
         ConnectionManager.Add(player.CharacterAdded:Connect(function(char)
-            task.wait(0.5)
-            ESPSystem.CleanupBillboards(char)
-            ESPSystem.CreatePlayerESP(char, player)
+            task.spawn(function()
+                task.wait(0.5)
+                if char ~= player.Character then return end
+                if char:FindFirstChild("ESP_Billboard") then return end
+                PartCacheSystem.Cleanup(player)
+                ESPSystem.CleanupBillboards(char)
+                ESPSystem.CreatePlayerESP(char, player)
+            end)
+        end))
+
+        -- GetPropertyChangedSignal: cubre re-entrada por STREAMING
+        -- CharacterAdded NO dispara en el cliente cuando el personaje regresa al rango de replicacion
+        ConnectionManager.Add(player:GetPropertyChangedSignal("Character"):Connect(function()
+            local char = player.Character
+            if not char then return end
+            task.spawn(function()
+                task.wait(0.5)
+                if char ~= player.Character then return end
+                if char:FindFirstChild("ESP_Billboard") then return end
+                PartCacheSystem.Cleanup(player)
+                ESPSystem.CleanupBillboards(char)
+                ESPSystem.CreatePlayerESP(char, player)
+            end)
         end))
 
         if player.Character then
-        ESPSystem.CreatePlayerESP(player.Character, player)
-    end
+            ESPSystem.CreatePlayerESP(player.Character, player)
+        end
 end
 
 function PlayerManager.RemovePlayer(player)
