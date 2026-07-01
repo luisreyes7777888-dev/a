@@ -2832,9 +2832,7 @@ function AimbotSystem.FindTarget(Center)
         if not hum or hum.Health <= 0 then continue end
 
         local part = nil
-        if Aiming.HeadshotPriority then
-            part = cache.Head
-        elseif Aiming.AimMode == "Cabeza" then
+        if Aiming.AimMode == "Cabeza" then
             part = cache.Head
         elseif Aiming.AimMode == "Cuerpo" then
             part = cache.HumanoidRootPart
