@@ -2366,21 +2366,23 @@ function AimbotSystem.LockCamera(target)
     local char = target.Parent
     local hum = char and char:FindFirstChild("Humanoid")
 
-    if hum and hum.SeatPart then
-        aimPos = hum.SeatPart.Position + VehicleAimConfig.OffsetEnemigo
-    end
-
     local localChar = LocalPlayer.Character
     local localHum = localChar and localChar:FindFirstChildOfClass("Humanoid")
     local cam = workspace.CurrentCamera
-    if localHum and WeaponAimConfig.Enabled and cam.CameraSubject ~= localHum then
+    if localHum and cam.CameraSubject ~= localHum then
         local camOffset = localHum.CameraOffset
         if camOffset.Magnitude > 0.01 then
             aimPos = aimPos - safeCamera.CFrame:VectorToWorldSpace(camOffset)
         end
     end
 
-    safeCamera.CFrame = CFrame.lookAt(safeCamera.CFrame.Position, aimPos)
+    if Aiming.UseSmoothTracking then
+        local smoothed = SmoothingSystem.GetSmoothedCamera(safeCamera, aimPos, Aiming.SmoothFactor)
+        safeCamera.CFrame = smoothed
+    else
+        safeCamera.CFrame = CFrame.lookAt(safeCamera.CFrame.Position, aimPos)
+    end
+
     StatisticsSystem.Data.TargetsLocked = StatisticsSystem.Data.TargetsLocked + 1
 end
 
